@@ -1,0 +1,75 @@
+if(rule 2||rule3) 
+	{
+	if(passing)
+		{
+			if(check lane to right next position is open)
+				{
+					move to that position;
+					if(rule 2)
+						{
+							passing = false;
+						}
+					else
+						{
+							if(in right most lane)
+								{
+									passing = false;
+								}
+							else
+								{
+									passing = true;
+								}	
+						}	
+				}
+		}
+	}
+else
+	{
+		if(next position in front is open)
+			{
+				move there
+			}	
+		else
+			{
+				if(rule4)
+					{
+						slow down
+					}
+				else
+					{
+						if(the lane to left is open in next pos)
+							{
+								move there;
+								if(rule 2)
+									{
+										if(in passing lane)
+											{
+												passing = true;
+											}
+										else
+											{
+												passing = false;
+											}	
+									}
+							}
+						else
+							{
+								if(rule 1) 
+									{
+										if(the lane to right is open in next pos)
+											{
+												move there;
+											}
+										else
+											{
+												slow down
+											}	
+									}
+								else
+									{
+									slowdown //change velocity
+									}
+							}
+					}			
+		     }
+	}	 

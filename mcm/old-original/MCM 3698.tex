@@ -1,0 +1,209 @@
+\documentclass{amsart}
+
+
+\usepackage{amssymb}
+\usepackage{amscd}
+
+
+\usepackage{graphics,amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+
+
+
+
+
+\title{Title}
+
+\begin{document}
+
+\maketitle
+
+\section{\bfseries{Introduction}}
+	\subsection{Background}
+		All countries implement a set of rules that help to regulate traffic and essential determine the common practices of the roads.  Many times though drivers choose to vary their compliance with all of these rules.  This disregard usually stems from drivers personal feelings on whether a rule is effective, if the rules conditions annoy the driver, and perceived time saved by breaking the rule.  One of these rules that has varying compliance is the rule that states a driver has to stay right unless to pass.  This states that a driver can only pass on the left of a driver and once they pass they should return to the right lane once they can.  Compliance is the key factor in the implications and effectiveness of this rule.  The question to be tested though is if people are going to follow this rule will it actually increase efficiency and safety of traffic flow. 
+	
+	\subsection{Approach}
+		In order to test how efficient this rule is for traffic flow and safety, we needed to first establish a model for how our traffic is interacting and how the traffic is flowing as a whole. Essentially in order to test if the rule has an effect we cannot check already existing data but instead create our own data that is controlled except for a vary in rule application. The currently most popular modeling of traffic involves treating the whole system as a pipe with fluid and then applying the discoveries and theorems of fluid dynamics.  This model is a macroscopic model though where essentially all control and measuring of the individual interactions is lost.  The other most common modeling technique for traffic flow is with individual particle interactions.  This treats each car, sometimes groups of cars, as a single particle and analyzing how these particles interact.  Our computer model turned out to be a particle model that treats each car as an individual.  Once we develop the system to analyze each individual interaction on a road system then we can begin to change how a driver will respond to this interaction.  As we vary these interaction choices, such as stay right except to pass or pass whenever and wherever you can, then we can see what the results of each interaction decision will have on the effect of the system as a whole.  
+
+\section{\bfseries{Assumptions and Definitions}}
+	\subsection{Definitions}
+		\begin{itemize}
+  			\item \textit{Highway}:an ideal model of a road with no entries or exit points
+			\item \textit{Vehicle}:an ideal car that has all share same constant length 
+			\item \textit{Driving Lane}: a highway lane a vehicle is free to travel in
+  			\item \textit{Passing Lane}: a highway lane a vehicle can only travel in while passing
+			\item \textit{Travel Time}: the time needed for a vehicle to travel length of road
+			\item \textit{Traffic Flux}: the rate of cars passing a single location along the highway
+			\item \textit{Rule}: distinct formulations of the passing laws 
+			\item \textit{Side-Swipe Accident}: collision based solely on lane-changing
+			\item \textit{Read-End Accident}: collision based solely on inefficiency to slow down
+			\item \textit{Probability functions}: 
+		\end{itemize}
+	
+	\subsection{Assumptions}
+		General assumptions to the problem turned out to be one of the biggest road blocks that influenced our progress.  At each step in both the method choosing and the model developing we had to evaluate previous assumptions we had made and what further assumptions we would need to make in order to promote realistic situations while still having a solvable system.  There were some major overlaying assumptions that we made:
+		\begin{itemize}
+			\item 	All vehicles have the same length 
+			\item 	Internal vehicular performance does not vary
+			\item 	Conservation of Cars: Total Number of Cars on Road Constant
+			\item  	Discrete Velocity and Discrete Position
+			\item  	All roads are uninterrupted highways
+			\item   Crashes do not affect dynamics
+				\begin{itemize}
+					\item 	No vehicles enter midway through road
+					\item 	No stops in highway allowed (traffic lights/intersections/crashes) 
+				\end{itemize}
+			\item  Hot air balloon perspective
+			\item  Width of Lanes and Shoulders do not affect dynamics
+			\item 	Severity of Side Swipe accidents is equal to severity of Rear-Ending accidents			
+		\end{itemize}
+		 A constant vehicle length can be defined due to only slight variations in actual car length and the ability to model longer vehicles by allowing two constant length vehicles to be connected at a specific speed.
+
+		By assuming that vehicles travel at discrete constant velocities all internal vehicular performance, such as acceleration and braking, can be ignored on a car to car basis. 
+
+	 	 Conservation of cars is a combination of factors: no vehicles enter mid-way through the highway and the density of the entire road as a whole is constant.  This correlates to there being no exit or entry ramps in the stretch of the highway and that as a car exits the highway.	
+
+		Hot Air Balloon Perspective is a perspective assumption based on a view of the whole section of the highway at a single time instead of an internal perspective where we are measuring from inside the system.  This plays into both the programming of the model as well as the macroscopic measuring of the system. 
+		
+		A constant vehicle length can be defined due to only slight variations in actual car length. Also, since there are discrete position intervals, a car can only be integer lengths of these discrete position intervals. As for modeling longer vehicles, the simulation can allow two constant length vehicles to be connected in line at a specific speed.
+
+		Internal vehicular performance is in reference to that all cars break, accelerate, and function at equal levels.  This assumption is a more subtle point that would increase variable amount without increasing the benefit of testing the passing rules.  Also, by the assumption that cars travel at discrete constant velocities internal vehicular performance should not vary on a vehicle to vehicle basis.   
+
+		Lane width, shoulder width, and curvature of the road are assumed to have no effect on the testing of the passing rules.  In general, lane widths on a highway have such small variations that any difference is assumed to have nominal effect on the ability to switch lanes.  Also, smaller lanes allow faster lane changes but decrease traveling safety so the assumption is these small variations do not affect safety.  (SOURCE) Same principles go apply to highway shoulders and median variations. No oncoming traffic is assumed so the median consideration is unnecessary at this time.  Shoulder width is seen to have an effect on a driver's safety perception but is assumed to have insignificant effect on efficiency of a passing rule application (SOURCE).
+
+		Conservation of cars is a combination of factors: no vehicles enter mid-way through the highway and the density of the entire road as a whole is constant.  This correlates to there being no exit or entry ramps in the stretch of the highway and that as a car exits the highway a car enters the highway.  As far as programming  
+
+		In our model we calculate the amount of accidents that are likely to result on a highway but simultaneously assuming that a crash will not stop or slow down traffic.  A main reason for this assumption is to simplify the programming process, because an accident is simply a counted in the program. However, more importantly, this assumption is justified because we want to test crashes caused by these passing rules.  When crashes are allowed to slow down traffic, the model begins to simulate how accidents affect traffic flow and density and not the passing rules we are trying to test.  
+
+		
+
+
+\section{\bfseries{Development of Method}}
+	\subsection{Method Rational}
+	Our approach to the problem was that we wanted a way to create and gather our own data depending on the set of rules for the road that we wanted implicated.  This would then allow more control over the parameter variation instead of just relying on already collected data for specific highways.  \\
+	
+	Initially there were three general model ideas that we considered in order to create data testing this rule. The first was a single particle model that would effectively model each individual interaction of a car trying to pass another car.  The other extreme was the idea to use differential equations to model the rate of flow for traffic.  Inside this idea we discovered that fluid dynamics and its differential equations were currently being used and would be our main focus.  The third model we considered developing was some form of a combination of the particle model and fluid dynamics model. 
+		
+		\subsubsection{\it Fluid Dynamics}
+		In the realm of traffic modeling we found that most applications involved fluid dynamics in one way or another.  The idea behind this technique is that cars in heavy traffic interact similar to particle, either gas or liquid, in a confined tube.  The first problem that appeared with this is that the models accuracy to model traffic decreases as density decreases (SOURCE).  This is in effect because as density decreases there begins to appear these large gaps in traffic that would not be present in either a fluid or a gas, even if we allowed the fluid to be a compressible fluid.  
+
+		\subsubsection{\it Discrete Particle Model}
+		
+		\subsubsection{Mixed Model}
+
+	\subsection{Inconsistency Fluid Dynamics}
+	\subsection{Choosing Final Model}
+
+\section{\bfseries{Road Rules}}
+	The rule that staying right except to pass becomes a more subtle point as the highway becomes three or more lanes wide.  Essentially there are two different rules that this stay right rule breaks down into when three or more lanes are present.  There is the rule that all drivers must remain as far right as possible and the rule that there is a single left most passing lane and drivers can travel within the remain other lanes freely.  In order to test all these different rules we developed four separate passing rules:
+		\begin{itemize}
+			\item No Passing Allowed
+			\item Free Passing
+			\item Single Passing Lane
+			\item Single Driving Lane
+		\end{itemize}
+	These are the four different rules of passing that we decided to test within our model.
+
+	\subsection{No Passing Allowed}
+	The No Passing Allowed Rule states that all lanes on the highway are driving lanes and that there is no passing involved in the system at all.  Under this rule whatever lane a vehicle starts within the vehicle will remain in that lane for the entirety of its travel.  The obvious result of this system is that quickly there will be large chains of cars all going at the same speed.  When the two or more lanes are present on a stretch of highway this model has no practical application, which supports why we are developing it as a control rule.  There are applications to this rule though when the highway only has one lane traffic, as in a construction zone or on a highway where there is only one lane traffic in each direction and the oncoming traffic is too heavy to ever pass.  In these cases, this No Passing Allowed Rule can provide effect insight into the clustering of these speed pockets.  Our research question is not concerned with this case of speed pockets though so we will simply think of this No Passing Allowed Rule as a base case that represents an extreme in the spectrum of rules.  
+	\subsection{Free Passing}
+	The Free Passing Rule states that the vehicle will continue in its current lane until it approaches another vehicle in its lane.  At the point that another vehicle is in front of the target vehicle the target vehicle will attempt to change lanes.  The vehicle will first try to pass the front vehicle on the left, but if there is no lane open to the left then the vehicle will attempt to also pass to the right.  If passing is also not possible to the right then the car will slow down to mirror the speed of the vehicle it is following. 
+
+	Therefore there are two important differences in this rule then in the other rules, direction of passing and the action after lane changing.  Under this rule vehicles can pass going either to the left or to the right.  Also, once a vehicle does change lanes it will remain in that lane until it is forced to pass again.  
+
+	This rule is providing us with a model that shows the absence of any passing laws.  In practical application most cars don’t operate by this Free Passing Rule, but there are certain individuals who interact in this manner when they feel they need to.  The real importance of this rule is that it provides a control case on the other extreme of the rule spectrum opposite that to the No Passing Rule.  The Free Passing Rule says that there is an absence of any rules regarding passing and thus gives a basis to show that passing rules need to be implemented to improve efficiency and safety. 
+	
+	\subsection{Single Passing Lane}
+	The Single Passing Rule states that there is only a single passing lane on the multilane highway and the remaining lanes are designated as driving lanes.  A Single Passing Rule and a Single Driving Rule are equivalent on a one or two lane highway.  This rule was created in order to account for the travel of slower vehicles in more than just the farthest right lane for highways of more than two lanes.  Therefore any lane that is not the farthest right or the farthest left lanes allows both driving and passing within it. 
+	
+	This rule can be assumed to closed mirror how heavy traffic flow works on a busy multilane highway.  Drivers tend to spread out among multiple lanes spending more time in a lane the farther right that lane is on the highway and leaving the left lane frequently empty or for carpooling.  We have not including any regard for a carpool lane since in our simulation only fast drivers will be traveling in the left lane at any time.   
+	
+	\subsection{Single Driving Lane}
+	The Single Driving Rule states that the farthest right lane is a driving lane and all other lanes on the highway are only passing lanes.  A Single Driving Rule and a Single Passing Rule are equivalent on a one or two lane highway.  
+
+	This rule tests the stay right except to pass law most efficiently.  By forcing drivers to only travel in the right lane except while passing the system takes into effect that a vehicle has to return to the same lane they were previously traveling in before overtaking another vehicle. Therefore this rule must be tested against the efficiency and safety of all the other rules in order to actually test the stay right except to pass law.    
+
+\section{\bfseries{Modeling}}
+	\subsection{Description of Model}
+	\subsection{Logic Structure}
+	\subsection{Probability Functions}
+	
+	\subsection{Coding of Program}
+
+\section{\bfseries{Analysis of Rules}}
+	\subsection{Applying Rules}
+	\subsection{Data from Model}
+
+\section{\bfseries{Statistical Analysis}}
+	In our analysis of the data, to determine which rule is best, we consider three factors,namely the average flow of a simulation, the average number of accidents, and the average speed for a given simulation with initial conditions:
+	\begin{itemize}
+		\item Density of cars ( High or low)
+		\item Number of lanes(2,3,4,5)
+	\end{itemize}
+	
+	\subsection{Definitions}
+
+
+	\begin{itemize}
+		\item Population: Every possibly value for the output parameters of our simulation.
+		\item Parameter: A characteristic of the distribution of our Population, such as its mean and variance.
+		\item Sample- Point estimates of the parameters of a given Simulation
+		\item Control variables- Parameters that stayed fixed for each road of the simulations
+		\item Independent variables- Parameters we varied through out each simulation,a.k.a. initial conditions
+		\item Dependent variables- Output parameters of the model
+		\item Sample size- Number of simulations ran for a given set of initial conditions
+	
+	\end{itemize}
+
+	\subsection{Assumptions}
+	\begin{itemize}
+		\item Each simulation is independent of previous simulations.
+		\item The best point estimates of average traffic flow, average accident rate, and average speed of a simulation is the sum of these quantities respectively, for each iteration over the number of iterations in a simulation.
+		\item The optimal rule to implement in traffic based on our model is determined by the highest average traffic flow, highest average speed, and lowest average accident rate.
+		\item A $95\%$ confidence level will reasonably estimate the true parameter of the population for all populations.
+	\end{itemize}
+	\textit{Justifications}
+	
+		We can assume each simulation is independent because the initial conditions have a random probability distribution associated with their discrete values and every simulation is ran as if it is its first time. 
+	
+	
+		
+	\subsection{Statistical Test Analysis}
+
+	\subsection{Statistical Analysis Difficulties}
+	Formatting the data  was the most difficult part in the statistical analysis. At first we attempted to analyze the data on a iterations basis for each simulation by summing over the average velocities of each iteration for any given simulation and dividing by 500, the total number of iterations. However in the XML(Extensible Markup Language) format that we used for persisting data, calculating the average of these iteration velocities for every simulation proved to be too difficult and time consuming in excel without using some type of XML to excel macro, which we were unskilled in. However, we did find the sample statistics of average safety factor, average simulation velocity, and average traffic flow for a single road type, the two lane, low-density initial conditions. To overcome this unforeseen difficulty, we went back to the model in our object-oriented programming language and performed the simulation summaries which calculated the sample statistics for each simulation at that data type level rather than the iteration level, which minimized the time to determine the averages over all our samples that was used for a statistical analysis.
+
+\section{\bfseries{Results}}
+
+\section{\bfseries{Strengths and Weaknesses}}
+	
+\section{\bfseries{Conclusion}}
+
+\section{\bfseries{Future Work}}
+	With the development of our simulation there are opportunities to adjust the starting conditions and individual vehicle interactions.  Therefore the simulations parameters can be changed in order to make the model more practical to the real world or to test different traffic flow questions.  With this ability in our model some variations should be tested but could not be completed within the time frame.  
+	\subsection{Car Individualized Rules}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
